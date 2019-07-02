@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - KeyLogger",
+            "request": "launch",
+            "mainClass": "KeyLogger",
+            "projectName": "project_e8fcd9bc"
+        }
+    ]
+}
